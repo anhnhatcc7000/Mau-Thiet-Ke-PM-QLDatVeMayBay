@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:padding="40dp">
+
+    <TextView
+        android:id="@+id/tv_tenTuyen"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:textSize="15sp"/>
+
+    <EditText
+        android:id="@+id/edt_startDes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Start Des"
+        android:textSize="15sp"
+        android:layout_marginTop="20dp"/>
+
+    <EditText
+        android:id="@+id/edt_endDes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="End Des"
+        android:textSize="15sp"
+        android:layout_marginTop="20dp"/>
+
+
+
+    <TextView
+        android:id="@+id/tv_error"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Hãy xoá những Tuyến Bay đang hoạt động của Tuyến này!!!"
+        android:textColor="@color/design_default_color_error"
+        android:textAlignment="center"
+        android:layout_marginTop="10dp"
+        android:textSize="16sp"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="15dp">
+
+        <Button
+            android:id="@+id/btn_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Edit"
+            android:textColor="@color/white"
+            android:background="@drawable/button_bg"
+            android:backgroundTint="@color/light_blue"/>
+
+        <Button
+            android:id="@+id/btn_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="Delete"
+            android:textColor="@color/white"
+            android:background="@drawable/button_bg"
+            android:backgroundTint="@color/design_default_color_error" />
+    </RelativeLayout>
+
+</LinearLayout>

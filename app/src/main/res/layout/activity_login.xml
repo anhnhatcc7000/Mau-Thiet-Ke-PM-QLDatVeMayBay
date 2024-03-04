@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="10dp"
+    android:id="@+id/parent"
+    android:background="#FFF7E1"
+    tools:context=".Account_Activity.LoginActivity">
+
+    <ImageView
+        android:id="@+id/iv_logo"
+        android:layout_width="316dp"
+        android:layout_height="187dp"
+        android:layout_gravity="center"
+        android:layout_margin="15dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/touristo_logo" />
+
+    <EditText
+        android:id="@+id/edt_mail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="test1@gmail.com"
+        android:hint="Email or phone number"
+        android:layout_marginBottom="10dp"
+        android:textSize="16dp" />
+
+    <EditText
+        android:id="@+id/edt_pass"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPassword"
+        android:text="12345678"
+        android:hint="Password"
+        android:textSize="16dp"
+        android:layout_marginBottom="15dp" />
+
+    <Button
+        android:id="@+id/btn_login"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button_bg"
+        android:backgroundTint="@color/yellow"
+        android:text="Login"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:textSize="20dp"/>
+
+    <TextView
+        android:id="@+id/tv_fgtPass"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Forget password?"
+        android:gravity="center"
+        android:textColor="@color/blue"
+        android:textStyle="bold"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:textSize="16dp"/>
+
+   <LinearLayout
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:orientation="horizontal"
+       android:gravity="center">
+
+       <TextView
+           android:id="@+id/tv_askRegis"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:text="Don't have an account yet? "
+           android:gravity="center"
+           android:textSize="16dp"
+           />
+
+       <TextView
+           android:id="@+id/tv_register"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:text="Register"
+           android:gravity="center"
+           android:textSize="16dp"
+           android:textStyle="bold"
+           android:textColor="@color/blue"/>
+
+   </LinearLayout>
+
+    <Switch
+        android:id="@+id/sw_user"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Customer" />
+</LinearLayout>

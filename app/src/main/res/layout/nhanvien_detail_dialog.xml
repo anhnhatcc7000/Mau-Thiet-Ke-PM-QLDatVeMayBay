@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:padding="40dp">
+
+    <TextView
+        android:id="@+id/tv_empName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="TenNV"
+        android:textSize="15sp"/>
+
+    <TextView
+        android:id="@+id/tv_empRole"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="VaiTro"
+        android:textSize="15sp"
+        android:layout_marginTop="20dp"/>
+
+    <EditText
+        android:id="@+id/edt_empPhone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="SDT"
+        android:textSize="15sp"
+        android:layout_marginTop="20dp"/>
+
+    <EditText
+        android:id="@+id/edt_empCCCD"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="CCCD"
+        android:textSize="15sp"
+        android:layout_marginTop="20dp"/>
+
+    <EditText
+        android:id="@+id/edt_empMail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Mail"
+        android:textSize="15sp"
+        android:layout_marginTop="20dp"/>
+
+    <EditText
+        android:id="@+id/edt_empAddr"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="DiaChi"
+        android:textSize="15sp"
+        android:layout_marginTop="20dp"/>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="15dp">
+
+        <Button
+            android:id="@+id/btn_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Edit" />
+
+        <Button
+            android:id="@+id/btn_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="Delete" />
+    </RelativeLayout>
+
+</LinearLayout>
