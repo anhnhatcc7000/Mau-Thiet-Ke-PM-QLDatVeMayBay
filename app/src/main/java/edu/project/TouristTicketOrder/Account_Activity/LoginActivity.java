@@ -29,7 +29,7 @@ import edu.project.TouristTicketOrder.R;
 
 public class LoginActivity extends AppCompatActivity {
     public static String cus;
-    public  static string ss;
+    public  static int ss;
     boolean isAdmin = false;
     TextView tv_register;
     EditText edt_mail, edt_pass;
