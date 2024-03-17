@@ -15,12 +15,41 @@ import java.util.ArrayList;
 import edu.project.TouristTicketOrder.Model.CTHDModel;
 import edu.project.TouristTicketOrder.R;
 
-public class CTHD_List_Adapter extends ArrayAdapter<CTHDModel> {
+public class CTHD_List_Adapter extends ArrayAdapter<CTHDModel> implements Observer {
+    private ArrayList<CTHDModel> arrayList; // Danh sách ban đầu
+    private ArrayList<CTHDModel> filteredList; // Danh sách đã lọc
     public CTHD_List_Adapter(@NonNull Context context, ArrayList<CTHDModel> arrayList) {
 
         // pass the context and arrayList for the super
         // constructor of the ArrayAdapter class
         super(context, 0, arrayList);
+        this.arrayList = new ArrayList<>(arrayList);
+        this.filteredList = new ArrayList<>(arrayList);
+    }
+    @Override
+    public int getCount() {
+        return filteredList.size();
+    }
+
+    @Override
+    public CTHDModel getItem(int position) {
+        return filteredList.get(position);
+    }
+
+    @Override
+    public void update(String searchQuery) {
+        filteredList.clear();
+        if(searchQuery.isEmpty()){
+            filteredList.addAll(arrayList);
+        } else{
+            for(CTHDModel item: arrayList){
+                if(item.getTenTuyen().toLowerCase().contains(searchQuery.toLowerCase())){
+                    filteredList.add(item);
+                }
+                // Bạn có thể thêm các điều kiện lọc khác tại đây
+            }
+        }
+        notifyDataSetChanged(); // Thông báo cho ListView cập nhật giao diện dựa trên danh sách mới
     }
 
     @NonNull
