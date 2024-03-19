@@ -32,19 +32,18 @@ public class CTHD_MainActivity extends AppCompatActivity implements Subject{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cthd_main);
-        dialog = new Dialog(this);
-        assignVariable("");
-        onLoading();
-        setupSearchFunctionality();
-
-    }
-
-    public void assignVariable(String tenTuyen)
-    {
         edt_searchName = findViewById(R.id.edt_searchName);
         lv_cthd = findViewById(R.id.lv_cthd);
+        dialog = new Dialog(this);
+        assignVariable();
+        setupSearchFunctionality();
+        onLoading();
+    }
+
+    public void assignVariable()
+    {
         // Tạo và đăng ký adapter làm Observer
-        CTHD_List_Adapter adapter = new CTHD_List_Adapter(this, dataBaseHandler.getAllCTHD(maKH, tenTuyen, ""));
+        CTHD_List_Adapter adapter = new CTHD_List_Adapter(this, dataBaseHandler.getAllCTHD(maKH, "", ""));
         registerObserver(adapter);
         lv_cthd.setAdapter(adapter);
     }
@@ -77,7 +76,7 @@ public class CTHD_MainActivity extends AppCompatActivity implements Subject{
                         // Close Dialog
                         dialog.dismiss();
                         /* Reload the List when a OrderDetail was deleted */
-                        assignVariable("");
+                        notifyObservers("");
                     }
                 });
             }
