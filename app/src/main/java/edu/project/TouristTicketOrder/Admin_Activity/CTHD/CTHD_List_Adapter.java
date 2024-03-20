@@ -15,12 +15,55 @@ import java.util.ArrayList;
 import edu.project.TouristTicketOrder.Model.CTHDModel;
 import edu.project.TouristTicketOrder.R;
 
-public class CTHD_List_Adapter extends ArrayAdapter<CTHDModel> {
+public class CTHD_List_Adapter extends ArrayAdapter<CTHDModel> implements Observer {
+    private ArrayList<CTHDModel> arrayList; // Danh sách ban đầu
+    private ArrayList<CTHDModel> filteredList; // Danh sách đã lọc
     public CTHD_List_Adapter(@NonNull Context context, ArrayList<CTHDModel> arrayList) {
-
         // pass the context and arrayList for the super
         // constructor of the ArrayAdapter class
         super(context, 0, arrayList);
+        this.arrayList = new ArrayList<>(arrayList);
+        this.filteredList = new ArrayList<>(arrayList);
+    }
+    @Override
+    public int getCount() {
+        return filteredList.size();
+    }
+
+    @Override
+    public CTHDModel getItem(int position) {
+        return filteredList.get(position);
+    }
+
+    @Override
+    public void update(String searchQuery) {
+        filteredList.clear();
+        if (searchQuery.isEmpty()) {
+            filteredList.addAll(arrayList);
+        } else {
+            for (CTHDModel item : arrayList) {
+                boolean matched = false;
+
+                // Tiềm kiếm theo tên tuyến bay
+                if (item.getTenTuyen().toLowerCase().contains(searchQuery.toLowerCase())) {
+                    matched = true;
+                }
+                // Tiềm kiếm theo mã đơn
+                String maDon = String.valueOf(item.getMaDon());
+                if (!matched && maDon.contains(searchQuery.toLowerCase())) {
+                    matched = true;
+                }
+                // Tiềm kiếm theo tên khách hàng
+                if (!matched && item.getTenKH().toLowerCase().contains(searchQuery.toLowerCase())) {
+                    matched = true;
+                }
+
+                if (matched) {
+                    filteredList.add(item);
+                }
+            }
+        }
+        notifyDataSetChanged(); // Thông báo cho ListView cập nhật giao diện dựa trên danh sách mới
     }
 
     @NonNull
@@ -37,10 +80,10 @@ public class CTHD_List_Adapter extends ArrayAdapter<CTHDModel> {
         CTHDModel currentTuyenXe = getItem(position);
         // get TenTuyen
         TextView tv_tenTuyen = currentItemView.findViewById(R.id.tv_tenTuyen);
-        tv_tenTuyen.setText(currentTuyenXe.getTenTuyen());
+        tv_tenTuyen.setText("Mã đơn: " + currentTuyenXe.getMaDon());
 
         TextView tv_maDon = currentItemView.findViewById(R.id.tv_maDon);
-        String text = "Mã đơn: " + currentTuyenXe.getMaDon();
+        String text = "Tuyến: " + currentTuyenXe.getTenTuyen();
         tv_maDon.setText(text);
 
         TextView tv_tenKH = currentItemView.findViewById(R.id.tv_tenKH);
