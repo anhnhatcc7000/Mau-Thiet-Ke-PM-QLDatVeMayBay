@@ -11,10 +11,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -26,7 +28,10 @@ import edu.project.TouristTicketOrder.Model.MayBayModel;
 import edu.project.TouristTicketOrder.Model.TuyenBayModel;
 import edu.project.TouristTicketOrder.R;
 
-public class BookingDetail extends AppCompatActivity {
+public class
+
+
+BookingDetail extends AppCompatActivity {
     ImageButton ib_back;
     RadioGroup rd_luggage;
     TextView tv_day, tv_tenTuyen, tv_time, tv_vehicle_detail, tv_cusName, tv_cusPhone, tv_cusMail, tv_seat, tv_changeSeat, tv_totalPrice;
@@ -37,7 +42,8 @@ public class BookingDetail extends AppCompatActivity {
     public int currentPrice, hanhLy = 0;
     MayBayModel mayBayModel;
     TuyenBayModel tuyenBayModel;
-
+    EditText etVoucher;
+    Button btnApplyVoucher;
     CustomerModel customerModel;
     DataBaseHandler dataBaseHandler;
     @Override
@@ -52,6 +58,12 @@ public class BookingDetail extends AppCompatActivity {
         assignVariable();
         bookButtonClick();
         luggageSelect();
+        btnApplyVoucher.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                applyVoucher();
+            }
+        });
         ib_back = findViewById(R.id.ib_back);
         ib_back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -142,6 +154,7 @@ public class BookingDetail extends AppCompatActivity {
                 intent.putExtra("mayBayModel", mayBayModel);
                 intent.putExtra("customerModel", customerModel);
                 intent.putExtra("hanhLy", hanhLy);
+                intent.putExtra("finalTotalPrice", totalPrice);
                 startActivity(intent);
             }
         });
@@ -202,10 +215,43 @@ public class BookingDetail extends AppCompatActivity {
         tv_cusMail.setText(customerModel.getMail());
 
         tv_seat = (TextView) findViewById(R.id.tv_seat);
+        etVoucher = findViewById(R.id.editText_voucher);
+        btnApplyVoucher = findViewById(R.id.btn_voucher);
         tv_totalPrice = (TextView) findViewById(R.id.tv_totalPrice);
         btn_pay = findViewById(R.id.btn_pay);
         btn_pay.setBackgroundColor(Color.parseColor("#039ae7"));
 
         currentPrice = tuyenBayModel.getGia();
     }
+
+    public void applyVoucher() {
+        String voucherCode = etVoucher.getText().toString();
+        if (!voucherCode.isEmpty()) {
+            DataBaseHandler dbHandler = new DataBaseHandler(this);
+            int discount = dbHandler.fetchVoucherDiscountFromDB(voucherCode); // Lấy giá trị giảm giá từ DB
+            if (discount > 0) {
+                // Tính giảm giá dựa vào giá trị discount
+                int discountAmount; // Số tiền được giảm
+                if (discount <= 100) { // Giả sử là giảm giá theo phần trăm
+                    discountAmount = (int)((discount / 100.0) * totalPrice);
+                } else { // Giảm giá trực tiếp bằng giá tiền
+                    discountAmount = discount;
+                }
+
+                totalPrice -= discountAmount; // Áp dụng giảm giá
+                if (totalPrice < 0) totalPrice = 0; // Đảm bảo tổng giá không âm
+
+                tv_totalPrice.setText(totalPrice + " VND");
+                Toast.makeText(this, "Áp dụng voucher thành công! Giảm giá: " + discountAmount + " VND", Toast.LENGTH_SHORT).show();
+
+            } else {
+                Toast.makeText(this, "Mã voucher không hợp lệ hoặc đã hết hạn.", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(this, "Vui lòng nhập mã voucher.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+
 }

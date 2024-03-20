@@ -147,6 +147,31 @@ public class DataBaseHandler extends SQLiteOpenHelper{
             + ")";
 
 
+    // ---------------------------- Table Voucher ----------------------------
+    public static final String TABLE_Voucher = "VOUCHER";
+    public static final String COLUMN_Voucher_MaVoucher = "MaVoucher";
+    public static final String COLUMN_Voucher_MoTa = "MoTa";
+    public static final String COLUMN_GiamGia = "GiamGia"; // Giá trị giảm giá hoặc phần trăm giảm giá
+    public static final String COLUMN_NgayBatDau = "NgayBatDau";
+    public static final String COLUMN_NgayKetThuc = "NgayKetThuc";
+    public static final String CREATE_TABLE_VOUCHER = "CREATE TABLE " + TABLE_Voucher + " ( "
+            + " " + COLUMN_Voucher_MaVoucher + " varchar(50) PRIMARY KEY, "
+            + " " + COLUMN_Voucher_MoTa + " Nvarchar(100), "
+            + " " + COLUMN_GiamGia + " integer NOT NULL, "
+            + " " + COLUMN_NgayBatDau + " varchar(16), "
+            + " " + COLUMN_NgayKetThuc + " varchar(16) "
+            + ")";
+    // ---------------------------- Table ApDungVoucher ----------------------------
+    public static final String TABLE_ApDungVoucher = "APDUNGVOUCHER";
+    public static final String COLUMN_ApDungVoucher_MaDon = "MaDon";
+    public static final String COLUMN_ApDungVoucher_MaVoucher = "MaVoucher";
+    public static final String CREATE_TABLE_APDUNGVOUCHER = "CREATE TABLE " + TABLE_ApDungVoucher + " ( "
+            + " " + COLUMN_ApDungVoucher_MaDon + " integer NOT NULL, "
+            + " " + COLUMN_ApDungVoucher_MaVoucher + " varchar(50) NOT NULL, "
+            + " FOREIGN KEY (" + COLUMN_ApDungVoucher_MaDon + ") REFERENCES " + TABLE_CTHD + "(" + COLUMN_MaDon + "), "
+            + " FOREIGN KEY (" + COLUMN_ApDungVoucher_MaVoucher + ") REFERENCES " + TABLE_Voucher + "(" + COLUMN_Voucher_MaVoucher + ") "
+            + ")";
+
     /* -------------------------------------------------------------------------------------------------------------------- */
     public DataBaseHandler(@Nullable Context context) {
         super(context, "QLVeMaybay.db", null, 17);
@@ -163,19 +188,35 @@ public class DataBaseHandler extends SQLiteOpenHelper{
         db.execSQL(CREATE_TABLE_MayBay);
         db.execSQL(CREATE_TABLE_CTHD);
         db.execSQL(CREATE_TABLE_TuyenBay);
-
+        db.execSQL(CREATE_TABLE_VOUCHER);
+        db.execSQL(CREATE_TABLE_APDUNGVOUCHER);
         onCreateInsert(db);
 //        db.close();
     }
 
     public void onCreateInsert(SQLiteDatabase db) {
 
+        ContentValues cv = new ContentValues();
+        // VOUCHER
+        cv.put(COLUMN_Voucher_MaVoucher, "VOUCHER100K");
+        cv.put(COLUMN_Voucher_MoTa, "Giảm 100.000 VND cho lần đặt vé đầu tiên");
+        cv.put(COLUMN_GiamGia, 100000);
+        cv.put(COLUMN_NgayBatDau, "2023-01-01");
+        cv.put(COLUMN_NgayKetThuc, "2023-12-31");
 
-        Date dateTime = new Date();
+        db.insert(TABLE_Voucher, null, cv);
+
+        cv.put(COLUMN_Voucher_MaVoucher, "VOUCHER10%");
+        cv.put(COLUMN_Voucher_MoTa, "Giảm 10% cho tổng vé");
+        cv.put(COLUMN_GiamGia, 10);
+        cv.put(COLUMN_NgayBatDau, "2024-03-19");
+        cv.put(COLUMN_NgayKetThuc, "2024-04-19");
+
+        db.insert(TABLE_Voucher, null, cv);
+
         // TUYENBAY
         String noiXuatPhat = "Tân Sơn Nhất";
         String noiDen = "Liên Khương";
-        ContentValues cv = new ContentValues();
         cv.put(COLUMN_TenChang, "Hồ Chí Minh - Đà Lạt");
         cv.put(COLUMN_SanBayDi, noiXuatPhat);
         cv.put(COLUMN_SanBayDen, noiDen);
@@ -311,6 +352,8 @@ public class DataBaseHandler extends SQLiteOpenHelper{
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NhanVien);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_ChangBay);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_TuyenBay);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_Voucher);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ApDungVoucher);
 
         onCreate(db);
     }
@@ -957,11 +1000,11 @@ public class DataBaseHandler extends SQLiteOpenHelper{
         return null;
     }
 
-    public ArrayList<CTHDModel> getAllCTHD(int maKH, String tenTuyen, String bienSoXe)
+    public ArrayList<CTHDModel> getAllCTHD(int maKH, String tenTuyen, String maHoaDon)
     {
         final ArrayList<CTHDModel> arrayList = new ArrayList<>();
         String tenTuyen_convert = "'%" + tenTuyen + "%'";
-        String bienSoXe_convert = "'%" + bienSoXe + "%'";
+        String maHoaDon_convert = "'%" + maHoaDon + "%'";
         String maKhString = "'%" + maKH + "%'";
 
         SQLiteDatabase db = this.getReadableDatabase();
@@ -978,7 +1021,7 @@ public class DataBaseHandler extends SQLiteOpenHelper{
                 "INNER JOIN MAYBAY ON TUYENBAY.MaMB = MAYBAY.MaMB " +
                 "WHERE CTHD.MaKH LIKE " + maKhString +
                 " AND CHANGBAY.TenChang LIKE " + tenTuyen_convert +
-                " AND MAYBAY.MaSoMB LIKE " + bienSoXe_convert, null);
+                " AND CTHD.MaDon LIKE " + maHoaDon_convert, null);
 
         while (cursor.moveToNext()) {
             CTHDModel cthdModel = new CTHDModel();
@@ -1201,5 +1244,32 @@ public class DataBaseHandler extends SQLiteOpenHelper{
         return numberOfOrders;
     }
 
+    /*---------------------------------------------- Tinh Voucher ---------------------------------------------- */
+    public int fetchVoucherDiscountFromDB(String voucherCode) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        int discount = 0; // Giả định mặc định không có giảm giá nếu không tìm thấy voucher
+
+        // Chuẩn bị câu truy vấn
+        String[] projection = { "GiamGia" }; // Đảm bảo cột "GiamGia" tồn tại trong bảng VOUCHER
+        String selection = "MaVoucher = ?";
+        String[] selectionArgs = { voucherCode };
+
+        Cursor cursor = db.query(
+                "VOUCHER",   // Tên bảng
+                projection,  // Các cột cần lấy
+                selection,   // Điều kiện WHERE
+                selectionArgs, // Giá trị cho điều kiện WHERE
+                null,   // groupBy
+                null,   // having
+                null    // orderBy
+        );
+
+        if (cursor.moveToFirst()) {
+            discount = cursor.getInt(cursor.getColumnIndexOrThrow("GiamGia"));
+        }
+        cursor.close();
+
+        return discount;
+    }
 
 }

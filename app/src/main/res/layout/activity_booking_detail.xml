@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@drawable/custom_gradient"
+    android:orientation="vertical"
     tools:context=".BookingPage.BookingDetail">
-<!--    android:background="@drawable/gradient_background"-->
+    <!--    android:background="@drawable/gradient_background"-->
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -71,12 +71,6 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <!--            <TextView-->
-            <!--                android:id="@+id/tv_time"-->
-            <!--                android:layout_width="match_parent"-->
-            <!--                android:layout_height="wrap_content"-->
-            <!--                android:layout_marginTop="15dp"-->
-            <!--                android:text="TextView" />-->
 
             <TextView
                 android:id="@+id/tv_vehicle_detail"
@@ -92,8 +86,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
         android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
         android:layout_marginBottom="10dp"
         android:background="@drawable/border_radius_30dp"
         android:backgroundTint="@color/white"
@@ -104,10 +98,10 @@
             android:id="@+id/textView13"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Thông tin hành khách: "
+            android:text="Thông tin đặt vé: "
             android:textColor="@color/blue"
             android:textSize="18sp"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tv_cusName"
@@ -115,10 +109,10 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
-            android:text="TextView"
-            android:textColor="@color/black"
             android:drawableLeft="@drawable/baseline_account_box_24"
-            android:drawablePadding="10dp"/>
+            android:drawablePadding="10dp"
+            android:text="TextView"
+            android:textColor="@color/black" />
 
         <TextView
             android:id="@+id/tv_cusPhone"
@@ -126,10 +120,10 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
-            android:text="TextView"
-            android:textColor="@color/black"
             android:drawableLeft="@drawable/baseline_phone_24"
-            android:drawablePadding="10dp"/>
+            android:drawablePadding="10dp"
+            android:text="TextView"
+            android:textColor="@color/black" />
 
         <TextView
             android:id="@+id/tv_cusMail"
@@ -137,26 +131,16 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
-            android:text="TextView"
-            android:textColor="@color/black"
             android:drawableLeft="@drawable/baseline_alternate_email_24"
-            android:drawablePadding="10dp"/>
-
-        <TextView
-            android:id="@+id/tv_subtitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Tiện ích: "
-            android:textColor="@color/blue"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_marginTop="15dp"/>
+            android:drawablePadding="10dp"
+            android:text="TextView"
+            android:textColor="@color/black" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="10dp">
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/tv"
@@ -178,26 +162,27 @@
                 android:layout_marginRight="15dp"
                 android:text="Bạn chưa chọn ghế" />
         </LinearLayout>
+
         <TextView
             android:id="@+id/tv_changeSeat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Đổi ghế"
             android:layout_gravity="center_horizontal"
+            android:layout_marginTop="5dp"
             android:background="@drawable/button_bg"
             android:backgroundTint="@color/light_blue"
+            android:padding="5dp"
+            android:text="Đổi ghế"
             android:textColor="@color/white"
             android:textSize="18dp"
-            android:padding="5dp"
-            android:textStyle="bold"
-            android:layout_marginTop="5dp"/>
+            android:textStyle="bold" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
             android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp">
+            android:layout_marginTop="10dp"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/tv_kygui"
@@ -215,65 +200,104 @@
                 android:id="@+id/rd_luggage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center">
+                android:gravity="center"
+                android:orientation="horizontal">
 
                 <RadioButton
                     android:id="@+id/rd_0kg"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="0kg"
-                    android:layout_marginRight="10dp"/>
+                    android:layout_marginRight="10dp"
+                    android:text="0kg" />
 
                 <RadioButton
                     android:id="@+id/rd_10kg"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="+10kg (130k)"
-                    android:layout_marginRight="10dp"/>
+                    android:layout_marginRight="10dp"
+                    android:text="+10kg (130k)" />
 
                 <RadioButton
                     android:id="@+id/rd_20kg"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="+20kg (230k)"/>
+                    android:text="+20kg (230k)" />
             </RadioGroup>
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/editText_voucher"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/edittext_background"
+                android:hint="Nhập mã voucher"
+                android:inputType="text"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:textSize="14sp" />
+
+            <Button
+                android:id="@+id/btn_voucher"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/button_rounded"
+                android:text="Áp Dụng"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="3dp"
+            android:orientation="horizontal">
         <TextView
             android:id="@+id/tv_subtitle2"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Thành tiền: "
             android:textColor="@color/blue"
             android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_marginTop="5dp"/>
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tv_totalPrice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            android:textColor="@color/black"
-            android:textSize="16sp"
             android:layout_gravity="center_vertical"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
             android:drawableLeft="@drawable/baseline_attach_money_24"
-            android:drawablePadding="10dp"/>
+            android:drawablePadding="10dp"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
+        </LinearLayout>
     </LinearLayout>
 
     <Button
         android:id="@+id/btn_pay"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="20dp"
         android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:enabled="false"
         android:text="Thanh toán"
         android:textAllCaps="false"
-        android:textStyle="bold"
-        android:textSize="22sp"
         android:textColor="@color/white"
-        android:enabled="false"/>
+        android:textSize="20sp"
+        android:textStyle="bold" />
 </LinearLayout>
