@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/blue" /> <!-- Thay '@color/blue' bằng màu nền của bạn -->
+    <corners android:radius="10dp" /> <!-- Điều chỉnh giá trị này để thay đổi độ bo góc -->
+</shape>
