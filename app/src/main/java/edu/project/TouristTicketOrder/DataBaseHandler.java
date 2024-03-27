@@ -22,6 +22,7 @@ import edu.project.TouristTicketOrder.Model.ChangBayModel;
 import edu.project.TouristTicketOrder.Model.TuyenBayModel;
 
 public class DataBaseHandler extends SQLiteOpenHelper{
+    private static DataBaseHandler sInstance;
     LocalDateTimeConvert localDateTimeConvert = new LocalDateTimeConvert();
     public static final String TABLE_ChangBay = "ChangBay";
     public static final String COLUMN_Chang_MaChangBay = "MaChang";
@@ -193,7 +194,12 @@ public class DataBaseHandler extends SQLiteOpenHelper{
         onCreateInsert(db);
 //        db.close();
     }
-
+    public static synchronized DataBaseHandler getInstance(Context context) {
+        if (sInstance == null) {
+            sInstance = new DataBaseHandler(context.getApplicationContext());
+        }
+        return sInstance;
+    }
     public void onCreateInsert(SQLiteDatabase db) {
 
         ContentValues cv = new ContentValues();
@@ -387,7 +393,7 @@ public class DataBaseHandler extends SQLiteOpenHelper{
                 return true;
             }
         }
-            return false;
+        return false;
     }
 
     // Check if the information is duplicated
@@ -396,14 +402,14 @@ public class DataBaseHandler extends SQLiteOpenHelper{
         String mail_convert = "'" + newCustomer.getMail() + "'";
         String sdt_convert = "'" + newCustomer.getSDT() + "'";
 
-            Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_KhachHang
-                                        + " WHERE " + COLUMN_KH_SDT + " = " + sdt_convert
-                                        + " OR " + COLUMN_KH_Email + " = " + mail_convert, null);
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_KhachHang
+                + " WHERE " + COLUMN_KH_SDT + " = " + sdt_convert
+                + " OR " + COLUMN_KH_Email + " = " + mail_convert, null);
 
         if(cursor.moveToFirst()) {
             cursor.close();
             db.close();
-                return true;
+            return true;
         }
         cursor.close();
         db.close();
@@ -1108,7 +1114,7 @@ public class DataBaseHandler extends SQLiteOpenHelper{
                 if(isKH && tuyenBayModel.getNgayKhoihanh() != null && !localDateTimeConvert.DateTimeCompare(currentDateTime, tuyenBayModel.getNgayKhoihanh()))
                 {
 //                    if(!localDateTimeConvert.DateTimeCompare(currentDateTime, tuyenBayModel.getNgayKhoihanh()))
-                        getDataTuyenXe(tuyenBayModel, arrayList, cursor);
+                    getDataTuyenXe(tuyenBayModel, arrayList, cursor);
                 } else if(!isKH) {
                     getDataTuyenXe(tuyenBayModel, arrayList, cursor);
                 }
