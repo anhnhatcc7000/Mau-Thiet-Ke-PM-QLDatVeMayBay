@@ -13,4 +13,16 @@
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
+    <style name="ScreenBackGround" >
+    <item name="android:background">@color/black</item>
+    </style>
+    <style name="CardBackGround">
+        <item name="android:background">@color/darkgrey</item>
+    </style>
+    <style name="TextColor">
+        <item name="android:textColor">@color/grey</item>
+    </style>
+    <style name="BottomNagi">
+        <item name="android:background">@color/Darkblue</item>
+    </style>
 </resources>
