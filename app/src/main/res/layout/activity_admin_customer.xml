@@ -34,39 +34,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edt_CustomerName" />
 
-<!--    <EditText-->
-<!--        android:id="@+id/edt_CustomerName"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_margin="16dp"-->
-<!--        android:padding="8dp"-->
-<!--        android:textSize="16sp"-->
-<!--        android:fontFamily="@font/roboto"-->
-<!--        android:inputType="textPersonName"-->
-<!--        android:hint="Customer Name"-->
-<!--        android:background="@drawable/edit_text_bg"-->
-<!--        android:drawableLeft="@drawable/ic_user"-->
-<!--        android:drawablePadding="8dp"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent"/>-->
-
-<!--    <EditText-->
-<!--        android:id="@+id/edt_Phone"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_margin="16dp"-->
-<!--        android:padding="8dp"-->
-<!--        android:textSize="16sp"-->
-<!--        android:fontFamily="@font/roboto"-->
-<!--        android:inputType="phone"-->
-<!--        android:hint="Customer Phone Number"-->
-<!--        android:background="@drawable/edit_text_bg"-->
-<!--        android:drawableLeft="@drawable/ic_phone"-->
-<!--        android:drawablePadding="8dp"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@id/edt_CustomerName"/>-->
 
 
     <TextView
@@ -168,6 +135,7 @@
         android:textColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edt_CustomerName" />
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

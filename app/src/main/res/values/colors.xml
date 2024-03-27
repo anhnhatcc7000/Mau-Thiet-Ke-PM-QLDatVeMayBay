@@ -17,5 +17,9 @@
     <color name="zalo_color">#008CFF</color>
     <color name="momo_color">#aa1f6c</color>
     <color name="navy">#1a2a3a</color>
+    <color name="grey">#aaa</color>
+
+    <color name="Darkblue"> #0033CC	</color>B
+    <color name="darkgrey">#ff424242</color>
 
 </resources>
