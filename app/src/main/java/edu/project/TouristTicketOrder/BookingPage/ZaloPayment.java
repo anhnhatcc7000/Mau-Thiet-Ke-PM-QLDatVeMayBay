@@ -43,7 +43,7 @@ public  class ZaloPayment extends Activity implements PaymentStrategy {
         dataBaseHandler.addCTHD(tuyenModel, seats, maKH, total_Price, hanhLy);
         requestZalo(total_Price);
         // Hiển thị thông báo thành công
-        Toast.makeText(context, "Thanh toán bằng thành công.", Toast.LENGTH_LONG).show();
+        Toast.makeText(context, "Thanh toán bằng zalo thành công.", Toast.LENGTH_LONG).show();
 
         // Xử lý sau khi thanh toán thành công, ví dụ: chuyển hướng người dùng về trang chủ
         Intent intent = new Intent(context, HomeActivity.class);

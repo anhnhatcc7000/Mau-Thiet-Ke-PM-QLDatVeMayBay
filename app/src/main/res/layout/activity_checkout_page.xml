@@ -105,21 +105,22 @@
 
         <TextView
             android:id="@+id/button_zalopay"
-            android:layout_width="match_parent"
+            android:layout_width="218dp"
             android:layout_height="wrap_content"
-            android:text="Thanh toán Zalopay"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/zalopay_logo"
+            android:gravity="center_vertical"
+            android:onClick="onZaloPaymentClicked"
+            android:paddingStart="12dp"
+            android:paddingTop="12dp"
+
+            android:paddingEnd="24dp"
+            android:paddingBottom="12dp"
+
             android:textColor="@color/white"
             android:textSize="18sp"
-            android:gravity="center_vertical"
             android:textStyle="bold"
-            android:background="@drawable/button_bg"
-            android:backgroundTint="#D82D8B"
-            android:paddingStart="12dp"
-            android:paddingEnd="24dp"
-            android:paddingTop="12dp"
-            android:paddingBottom="12dp"
-            android:layout_marginTop="16dp"
-            android:onClick="onZaloPaymentClicked"/>
+            android:layout_gravity="center_horizontal"/>
         <TextView
             android:id="@+id/tv_totalPrice"
             android:layout_width="wrap_content"
