@@ -84,18 +84,7 @@ public class CheckoutPage extends AppCompatActivity {
     }
 
 
-    public void cashPayment(View view)
-    {
-        dataBaseHandler.addCTHD(tuyenModel, seats, maKH, totalPrice, hanhLy);
-        SendMail(tuyenModel);
-        Toast.makeText(getApplicationContext(), "Đã lưu thông tin thanh toán", Toast.LENGTH_SHORT).show();
-        seats = null;
-        optionSeatList = new LinkedList<>();
-        Intent intent = new Intent(this, HomeActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
-        finish();
-    }
+
 
 
     public void SendMail(TuyenBayModel tuyenModel)
