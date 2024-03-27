@@ -13,39 +13,114 @@ import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.text.ParseException;
 import java.util.Date;
 
 import edu.project.TouristTicketOrder.Admin_Activity.AdminMainActivity;
+import edu.project.TouristTicketOrder.DataBaseHandler;
 import edu.project.TouristTicketOrder.HomePage.HomeActivity;
 import edu.project.TouristTicketOrder.LocalDateTimeConvert;
 import edu.project.TouristTicketOrder.Model.CustomerModel;
 import edu.project.TouristTicketOrder.Model.NhanVienModel;
 import edu.project.TouristTicketOrder.R;
 
+// Interface for both the original class and the proxy
+interface LoginInterface {
+    void login(String mail, String pass);
+}
+
+// Original class
+class OriginalLogin implements LoginInterface {
+    private LoginActivity loginActivity;
+
+    public OriginalLogin(LoginActivity loginActivity) {
+        this.loginActivity = loginActivity;
+    }
+
+    @Override
+    public void login(String mail, String pass) {
+        DataBaseHandler dataBaseHandler = new DataBaseHandler(loginActivity);
+        LoginValidation loginValidation = dataBaseHandler.checkCustomer(mail, pass);
+        if (loginValidation.isCorrect()) {
+            CustomerModel customerModel = loginValidation.getCurUser();
+
+            LoginActivity.cus = customerModel.getId() + "_" + customerModel.getSDT();
+            SharedPreferences currentUser = loginActivity.getApplicationContext().getSharedPreferences(LoginActivity.cus, AppCompatActivity.MODE_PRIVATE);
+            SharedPreferences.Editor editorCurrentUser = currentUser.edit();
+
+            editorCurrentUser.putInt("cusID", customerModel.getId());
+            editorCurrentUser.putString("cusName", customerModel.getTenKH());
+            editorCurrentUser.putString("cusPhone", customerModel.getSDT());
+            editorCurrentUser.putString("cusMail", customerModel.getMail());
+            editorCurrentUser.putString("cusPass", customerModel.getPass());
+            editorCurrentUser.putBoolean("autoLogin", false);
+            editorCurrentUser.apply();
+
+            SharedPreferences lastUser = loginActivity.getApplicationContext().getSharedPreferences("lastUser", AppCompatActivity.MODE_PRIVATE);
+            SharedPreferences.Editor editorLastUser = lastUser.edit();
+            editorLastUser.putString("lastCus", LoginActivity.cus);
+            editorLastUser.apply();
+
+            Intent intent = new Intent(loginActivity, HomeActivity.class);
+            loginActivity.startActivity(intent);
+        } else {
+            Toast.makeText(loginActivity.getApplicationContext(), "Wrong user name or password", Toast.LENGTH_SHORT).show();
+        }
+    }
+}
+
+// Proxy class
+class ProxyLogin implements LoginInterface {
+    private OriginalLogin originalLogin;
+    private LoginActivity loginActivity;
+    private boolean isAdmin = false;
+
+    public ProxyLogin(LoginActivity loginActivity) {
+        this.loginActivity = loginActivity;
+        this.originalLogin = new OriginalLogin(loginActivity);
+    }
+
+    @Override
+    public void login(String mail, String pass) {
+        if (isAdmin) {
+            // Perform additional checks or actions for admin login, if needed
+            NhanVienModel nhanVienModel = new NhanVienModel();
+            nhanVienModel.setEmpMail(mail);
+            nhanVienModel.setEmpCCCD("");
+            nhanVienModel.setEmpPhone("");
+            DataBaseHandler dataBaseHandler = new DataBaseHandler(loginActivity);
+            if (dataBaseHandler.CheckConditionNhanVien(nhanVienModel)) {
+                Intent intent = new Intent(loginActivity, AdminMainActivity.class);
+                loginActivity.startActivity(intent);
+            }
+        } else {
+            originalLogin.login(mail, pass);
+        }
+    }
+
+    public void setIsAdmin(boolean isAdmin) {
+        this.isAdmin = isAdmin;
+    }
+}
+
 public class LoginActivity extends AppCompatActivity {
     public static String cus;
-    boolean isAdmin = false;
     TextView tv_register;
     EditText edt_mail, edt_pass;
-    SharedPreferences lastUser, currentUser;
     LinearLayout parent;
     Switch sw_user;
+    SharedPreferences lastUser, currentUser;
     SharedPreferences.Editor editorLastUser, editorCurrentUser;
     LocalDateTimeConvert localDateTimeConvert = new LocalDateTimeConvert();
-    private DataBaseHandler dataBaseHandler;
-    private IDataBaseHandler dataBaseHandlerProxy; // Khai báo biến dataBaseHandlerProxy
-    private NhanVienModel nhanVienModel; // Khai báo biến nhanVienModel
+    private ProxyLogin proxyLogin;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        dataBaseHandlerProxy = new DataBaseHandlerProxy(LoginActivity.this);
         AutoLoginValidate();
         Date date = new Date();
         try {
@@ -65,11 +140,11 @@ public class LoginActivity extends AppCompatActivity {
                 if (isChecked) {
                     parent.setBackgroundColor(Color.parseColor("#88ccf1"));
                     sw_user.setText("Admin");
-                    isAdmin = true;
+                    proxyLogin.setIsAdmin(true);
                 } else {
                     parent.setBackgroundColor(Color.parseColor("#FFF7E1"));
                     sw_user.setText("Customer");
-                    isAdmin = false;
+                    proxyLogin.setIsAdmin(false);
                 }
             }
         });
@@ -83,8 +158,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        // Khởi tạo DataBaseHandler theo Singleton Pattern
-        dataBaseHandler = DataBaseHandler.getInstance(LoginActivity.this);
+        proxyLogin = new ProxyLogin(this);
 
         Button btn_login = findViewById(R.id.btn_login);
         btn_login.setOnClickListener(new View.OnClickListener() {
@@ -92,42 +166,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String mail = edt_mail.getText().toString();
                 String pass = edt_pass.getText().toString();
-
-                if (isAdmin) {
-                    if (dataBaseHandlerProxy.CheckConditionNhanVien(nhanVienModel)) {
-                        Intent intent = new Intent(LoginActivity.this, AdminMainActivity.class);
-                        startActivity(intent);
-                    } else {
-                        Toast.makeText(getApplicationContext(), "Admin login failed", Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    LoginValidation loginValidation = dataBaseHandler.checkCustomer(mail, pass);
-                    if (loginValidation.isCorrect()) {
-                        CustomerModel customerModel = loginValidation.getCurUser();
-
-                        cus = customerModel.getId() + "_" + customerModel.getSDT();
-                        currentUser = getApplicationContext().getSharedPreferences(cus, MODE_PRIVATE);
-                        editorCurrentUser = currentUser.edit();
-
-                        editorCurrentUser.putInt("cusID", customerModel.getId());
-                        editorCurrentUser.putString("cusName", customerModel.getTenKH());
-                        editorCurrentUser.putString("cusPhone", customerModel.getSDT());
-                        editorCurrentUser.putString("cusMail", customerModel.getMail());
-                        editorCurrentUser.putString("cusPass", customerModel.getPass());
-                        editorCurrentUser.putBoolean("autoLogin", false);
-                        editorCurrentUser.apply();
-
-                        lastUser = getApplicationContext().getSharedPreferences("lastUser", MODE_PRIVATE);
-                        editorLastUser = lastUser.edit();
-                        editorLastUser.putString("lastCus", cus);
-                        editorLastUser.apply();
-
-                        Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                        startActivity(intent);
-                    } else {
-                        Toast.makeText(getApplicationContext(), "Wrong user name or password", Toast.LENGTH_SHORT).show();
-                    }
-                }
+                proxyLogin.login(mail, pass);
             }
         });
 
@@ -151,78 +190,6 @@ public class LoginActivity extends AppCompatActivity {
                 cus = user;
                 startActivity(new Intent(LoginActivity.this, HomeActivity.class));
             }
-        }
-    }
-
-    public interface IDataBaseHandler {
-        boolean CheckConditionNhanVien(NhanVienModel nhanVienModel);
-        LoginValidation checkCustomer(String mail, String pass);
-    }
-    public class DataBaseHandlerProxy implements IDataBaseHandler {
-        private IDataBaseHandler dataBaseHandler;
-
-        public DataBaseHandlerProxy(Context context) {
-            this.dataBaseHandler = DataBaseHandler.getInstance(context);
-        }
-
-        @Override
-        public boolean CheckConditionNhanVien(NhanVienModel nhanVienModel) {
-            // Cung cấp logic thực thi hoặc thêm logic bổ sung ở đây
-            return dataBaseHandler.CheckConditionNhanVien(nhanVienModel);
-        }
-
-        @Override
-        public LoginValidation checkCustomer(String mail, String pass) {
-            // Cung cấp logic thực thi hoặc thêm logic bổ sung ở đây
-            return dataBaseHandler.checkCustomer(mail, pass);
-        }
-    }
-
-    public static class DataBaseHandler implements IDataBaseHandler{
-        private static DataBaseHandler instance;
-        private static SQLiteDatabase database;
-
-        // Tên của database
-        private static final String DATABASE_NAME = "YourDatabaseName.db";
-        // Phiên bản của database
-        private static final int DATABASE_VERSION = 1;
-
-        // Khai báo constructor là private để ngăn việc tạo đối tượng từ bên ngoài lớp
-        private DataBaseHandler(Context context) {
-            // Khởi tạo database ở đây
-            database = new SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
-                @Override
-                public void onCreate(SQLiteDatabase db) {
-                    // Tạo bảng và các cấu trúc khác cho database
-                }
-
-                @Override
-                public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-                    // Cập nhật database khi phiên bản thay đổi
-                }
-            }.getWritableDatabase();
-        }
-
-        // Phương thức getInstance để lấy ra phiên bản duy nhất của DataBaseHandler
-        public static synchronized DataBaseHandler getInstance(Context context) {
-            if (instance == null) {
-                instance = new DataBaseHandler(context.getApplicationContext());
-            }
-            return instance;
-        }
-
-        // Các phương thức xử lý cơ sở dữ liệu khác ở đây
-
-        // Thêm phương thức để kiểm tra điều kiện cho Admin
-        public boolean CheckConditionNhanVien(NhanVienModel nhanVienModel) {
-            // Viết logic kiểm tra ở đây
-            return false;
-        }
-
-        // Thêm phương thức để kiểm tra người dùng
-        public LoginValidation checkCustomer(String mail, String pass) {
-            // Viết logic kiểm tra ở đây và trả về đối tượng LoginValidation
-            return null;
         }
     }
 }
