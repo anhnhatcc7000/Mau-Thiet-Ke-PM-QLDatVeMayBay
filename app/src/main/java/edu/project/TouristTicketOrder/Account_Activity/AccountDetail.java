@@ -25,22 +25,23 @@ public class AccountDetail extends AppCompatActivity {
     CustomerModel customerModel;
     SharedPreferences pref;
     SharedPreferences.Editor editor;
-    DataBaseHandler dataBaseHandler = new DataBaseHandler(AccountDetail.this);
+    DataBaseHandler dataBaseHandler;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account_detail);
-
+        dataBaseHandler = DataBaseHandler.getInstance(getApplicationContext());
         assignVariable();
         onClickListener();
+
     }
 
     public void goBack(View view) {
         finish();
     }
 
-    public void assignVariable()
-    {
+    public void assignVariable() {
         customerModel = new CustomerModel();
         pref = getApplicationContext().getSharedPreferences(cus, MODE_PRIVATE);
         editor = pref.edit();
@@ -56,13 +57,13 @@ public class AccountDetail extends AppCompatActivity {
         edit_phone = findViewById(R.id.edit_phone);
         check_phone = findViewById(R.id.check_phone);
 
-        edt_cusName = (EditText) findViewById(R.id.edt_cusName);
+        edt_cusName = findViewById(R.id.edt_cusName);
         edt_cusName.setText(customerModel.getTenKH());
 
-        edt_cusMail = (EditText) findViewById(R.id.edt_cusMail);
+        edt_cusMail = findViewById(R.id.edt_cusMail);
         edt_cusMail.setText(customerModel.getMail());
 
-        edt_cusPhone = (EditText) findViewById(R.id.edt_cusPhone);
+        edt_cusPhone = findViewById(R.id.edt_cusPhone);
         edt_cusPhone.setText(customerModel.getSDT());
     }
 
