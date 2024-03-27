@@ -13,15 +13,14 @@ import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.text.ParseException;
 import java.util.Date;
 
 import edu.project.TouristTicketOrder.Admin_Activity.AdminMainActivity;
+import edu.project.TouristTicketOrder.DataBaseHandler;
 import edu.project.TouristTicketOrder.HomePage.HomeActivity;
 import edu.project.TouristTicketOrder.LocalDateTimeConvert;
 import edu.project.TouristTicketOrder.Model.CustomerModel;
@@ -38,8 +37,6 @@ public class LoginActivity extends AppCompatActivity {
     Switch sw_user;
     SharedPreferences.Editor editorLastUser, editorCurrentUser;
     LocalDateTimeConvert localDateTimeConvert = new LocalDateTimeConvert();
-    private DataBaseHandler dataBaseHandler;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,7 +45,7 @@ public class LoginActivity extends AppCompatActivity {
         Date date = new Date();
         try {
             String dateTime = localDateTimeConvert.getOtherWeekFromDate(date.toString(), 1);
-            Toast.makeText(getApplicationContext(), "" + dateTime, Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), ""+dateTime, Toast.LENGTH_LONG).show();
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }
@@ -60,7 +57,8 @@ public class LoginActivity extends AppCompatActivity {
         sw_user.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
+                if(isChecked)
+                {
                     parent.setBackgroundColor(Color.parseColor("#88ccf1"));
                     sw_user.setText("Admin");
                     isAdmin = true;
@@ -81,8 +79,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        // Khởi tạo DataBaseHandler theo Singleton Pattern
-        dataBaseHandler = DataBaseHandler.getInstance(LoginActivity.this);
+        DataBaseHandler dataBaseHandler = new DataBaseHandler(LoginActivity.this);
 
         Button btn_login = findViewById(R.id.btn_login);
         btn_login.setOnClickListener(new View.OnClickListener() {
@@ -91,14 +88,23 @@ public class LoginActivity extends AppCompatActivity {
                 String mail = edt_mail.getText().toString();
                 String pass = edt_pass.getText().toString();
 
-                if (isAdmin) {
-                    // Kiểm tra điều kiện cho Admin ở đây
+               if(isAdmin) {
+                   NhanVienModel nhanVienModel = new NhanVienModel();
+                   nhanVienModel.setEmpMail(mail);
+                   nhanVienModel.setEmpCCCD("");
+                   nhanVienModel.setEmpPhone("");
+                   if(dataBaseHandler.CheckConditionNhanVien(nhanVienModel))
+                   {
+                       Intent intent = new Intent(LoginActivity.this, AdminMainActivity.class);
+                       startActivity(intent);
+                   }
                 } else {
                     LoginValidation loginValidation = dataBaseHandler.checkCustomer(mail, pass);
-                    if (loginValidation.isCorrect()) {
-                        CustomerModel customerModel = loginValidation.getCurUser();
+                    if(loginValidation.isCorrect())
+                    {
+                        CustomerModel customerModel =  loginValidation.getCurUser();
 
-                        cus = customerModel.getId() + "_" + customerModel.getSDT();
+                        cus = customerModel.getId() + "_" +customerModel.getSDT();
                         currentUser = getApplicationContext().getSharedPreferences(cus, MODE_PRIVATE);
                         editorCurrentUser = currentUser.edit();
 
@@ -124,7 +130,8 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        TextView tv_fgtPass = findViewById(R.id.tv_fgtPass);
+
+        TextView tv_fgtPass = (TextView) findViewById(R.id.tv_fgtPass);
         tv_fgtPass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -134,64 +141,19 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    public void AutoLoginValidate() {
+    public void AutoLoginValidate()
+    {
         lastUser = getApplicationContext().getSharedPreferences("lastUser", MODE_PRIVATE);
         String user = lastUser.getString("lastCus", null);
-        if (user != null) {
+        if(user != null)
+        {
             currentUser = getApplicationContext().getSharedPreferences(user, MODE_PRIVATE);
             boolean autoLogin = currentUser.getBoolean("autoLogin", false);
-            if (autoLogin) {
+            if(autoLogin)
+            {
                 cus = user;
                 startActivity(new Intent(LoginActivity.this, HomeActivity.class));
             }
-        }
-    }
-
-    public static class DataBaseHandler {
-        private static DataBaseHandler instance;
-        private static SQLiteDatabase database;
-
-        // Tên của database
-        private static final String DATABASE_NAME = "YourDatabaseName.db";
-        // Phiên bản của database
-        private static final int DATABASE_VERSION = 1;
-
-        // Khai báo constructor là private để ngăn việc tạo đối tượng từ bên ngoài lớp
-        private DataBaseHandler(Context context) {
-            // Khởi tạo database ở đây
-            database = new SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
-                @Override
-                public void onCreate(SQLiteDatabase db) {
-                    // Tạo bảng và các cấu trúc khác cho database
-                }
-
-                @Override
-                public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-                    // Cập nhật database khi phiên bản thay đổi
-                }
-            }.getWritableDatabase();
-        }
-
-        // Phương thức getInstance để lấy ra phiên bản duy nhất của DataBaseHandler
-        public static synchronized DataBaseHandler getInstance(Context context) {
-            if (instance == null) {
-                instance = new DataBaseHandler(context.getApplicationContext());
-            }
-            return instance;
-        }
-
-        // Các phương thức xử lý cơ sở dữ liệu khác ở đây
-
-        // Thêm phương thức để kiểm tra điều kiện cho Admin
-        public boolean CheckConditionNhanVien(NhanVienModel nhanVienModel) {
-            // Viết logic kiểm tra ở đây
-            return false;
-        }
-
-        // Thêm phương thức để kiểm tra người dùng
-        public LoginValidation checkCustomer(String mail, String pass) {
-            // Viết logic kiểm tra ở đây và trả về đối tượng LoginValidation
-            return null;
         }
     }
 }
