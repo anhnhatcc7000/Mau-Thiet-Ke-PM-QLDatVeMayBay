@@ -20,6 +20,7 @@ import edu.project.TouristTicketOrder.Model.MayBayModel;
 import edu.project.TouristTicketOrder.Model.NhanVienModel;
 import edu.project.TouristTicketOrder.Model.ChangBayModel;
 import edu.project.TouristTicketOrder.Model.TuyenBayModel;
+import edu.project.TouristTicketOrder.Model.VoucherModel;
 
 public class DataBaseHandler extends SQLiteOpenHelper{
     private static DataBaseHandler sInstance;
@@ -175,7 +176,7 @@ public class DataBaseHandler extends SQLiteOpenHelper{
 
     /* -------------------------------------------------------------------------------------------------------------------- */
     public DataBaseHandler(@Nullable Context context) {
-        super(context, "QLVeMaybay.db", null, 17);
+        super(context, "QLVeMaybay.db", null, 27);
     }
 
     // This is called the first time a db is access
@@ -625,6 +626,45 @@ public class DataBaseHandler extends SQLiteOpenHelper{
         return changBayModel;
     }
 
+    public boolean addVoucher(VoucherModel voucherModel) {
+        String maVoucher = voucherModel.getMaVoucher();
+        String moTa = voucherModel.getMoTa();
+        String giamGia = voucherModel.getGiamGia();
+        String ngayBatDau = voucherModel.getNgayBatDau();
+        String ngayKetThuc = voucherModel.getNgayKetThuc();
+        boolean check = CheckConditionVoucher(voucherModel);
+        if(!check) {
+            SQLiteDatabase db = this.getWritableDatabase();
+            ContentValues cv = new ContentValues();
+            cv.put(COLUMN_Voucher_MaVoucher, maVoucher);
+            cv.put(COLUMN_Voucher_MoTa, moTa);
+            cv.put(COLUMN_GiamGia, giamGia);
+            cv.put(COLUMN_NgayBatDau, ngayBatDau);
+            cv.put(COLUMN_NgayKetThuc, ngayKetThuc);
+            db.insert(TABLE_Voucher, null, cv);
+            db.close();
+            return true;
+        }
+        return false;
+    }
+    // Check if the information is duplicated
+    public boolean CheckConditionVoucher(VoucherModel voucherModel) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String maVoucher_convert = "'" + voucherModel.getMaVoucher() + "'";
+
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_Voucher
+                + " WHERE " + COLUMN_Voucher_MaVoucher + " = " + maVoucher_convert, null);
+
+        if(cursor.moveToFirst()) {
+            cursor.close();
+            db.close();
+            return true;
+        }
+        cursor.close();
+        db.close();
+        return false;
+    }
+
     // Check CHANGBAY MAYBAY
     public boolean CheckConditionTuyenXe(ChangBayModel changBayModel) {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -814,7 +854,42 @@ public class DataBaseHandler extends SQLiteOpenHelper{
 
         return arrayList;
     }
+    //SearchVoucher
+    public ArrayList<VoucherModel> get_Voucher(String search_Voucher) {
+        final ArrayList<VoucherModel> arrayList = new ArrayList<VoucherModel>();
 
+        String tenVoucher_convert = "'%" + search_Voucher + "%'";
+        // get data from database
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_Voucher +
+                " WHERE " + COLUMN_Voucher_MaVoucher + " LIKE " + tenVoucher_convert, null);
+
+        if(cursor.moveToFirst()) {
+            do {
+                String maVoucher = cursor.getString(0);
+                String moTa = cursor.getString(1);
+                String giamGia = cursor.getString(2);
+                String ngayBatDau = cursor.getString(3);
+                String ngayKetThuc = cursor.getString(4);
+
+                VoucherModel voucherModel = new VoucherModel.VoucherBuilder()
+                        .maVoucher(maVoucher)
+                        .moTa(moTa)
+                        .giamGia(giamGia)
+                        .ngayBatDau(ngayBatDau)
+                        .ngayKetThuc(ngayKetThuc)
+                        .build();
+
+                arrayList.add(voucherModel);
+
+            }while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+
+        return arrayList;
+    }
     // Update a CHANGBAY MAYBAY data
     public Boolean updateNV(NhanVienModel nhanVienModel, String empCCCD, String empAddr, String empPhone, String empMail) {
         SQLiteDatabase db = getWritableDatabase();
@@ -840,7 +915,31 @@ public class DataBaseHandler extends SQLiteOpenHelper{
         db.close();
         return false;
     }
+    // Update Voucher
+    public Boolean updateVoucher(VoucherModel voucherModel, String moTa, String giamGia, String ngatBatDau, String ngayKetThuc) {
+        SQLiteDatabase db = getWritableDatabase();
 
+        String moTa_convert = "'" + moTa + "'";
+        String giamGia_convert = "'" + giamGia + "'";
+        String ngatBatDau_convert = "'" + ngatBatDau + "'";
+        String ngayKetThuc_convert = "'" + ngayKetThuc + "'";
+
+        try {
+
+            db.execSQL("UPDATE " + TABLE_Voucher
+                    + " SET "+ COLUMN_CCCD + " = " + moTa_convert
+                    + "," + COLUMN_DiaChi + " = " + giamGia_convert
+                    + "," + COLUMN_NhanVien_SDT + " = " + ngatBatDau_convert
+                    + "," + COLUMN_NhanVien_Mail + " = " + ngayKetThuc_convert
+                    + " WHERE " + COLUMN_Voucher_MaVoucher + " = " + voucherModel.getMaVoucher());
+
+            db.close();
+            return true;
+        }
+        catch (Exception e) {}
+        db.close();
+        return false;
+    }
     // Delete a customer
     public Boolean deleteNV (NhanVienModel nhanVienModel)
     {
@@ -848,6 +947,22 @@ public class DataBaseHandler extends SQLiteOpenHelper{
 
         Cursor cursor = db.rawQuery("DELETE FROM " + TABLE_NhanVien +
                 " WHERE " + COLUMN_NhanVien_MaNV + " = " + nhanVienModel.getEmpID(), null);
+
+        if (cursor.moveToFirst())
+        {
+            cursor.close();
+            db.close();
+            return true;
+        }
+        return false;
+    }
+    //Delete Voucher
+    public Boolean deleteVoucher (VoucherModel voucherModel)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        Cursor cursor = db.rawQuery("DELETE FROM " + TABLE_Voucher +
+                " WHERE " + COLUMN_Voucher_MaVoucher + " = " + voucherModel.getMaVoucher(), null);
 
         if (cursor.moveToFirst())
         {
