@@ -125,9 +125,6 @@
         </androidx.cardview.widget.CardView>
     </FrameLayout>
 
-
-
-
     <Button
         android:id="@+id/btn_KhachHang"
         android:layout_width="match_parent"
@@ -172,6 +169,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Chi Tiết Hoá Đơn"
+        android:layout_margin="15dp"
+        android:padding="15dp"
+        android:backgroundTint="@color/yellow"
+        android:background="@drawable/button_bg" />
+
+    <Button
+        android:id="@+id/btn_VouCher"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Voucher"
         android:layout_margin="15dp"
         android:padding="15dp"
         android:backgroundTint="@color/yellow"

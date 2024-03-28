@@ -5,9 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import edu.project.TouristTicketOrder.Admin_Activity.CTHD.CTHD_MainActivity;
@@ -15,6 +13,7 @@ import edu.project.TouristTicketOrder.Admin_Activity.KhachHang.Customer_MainActi
 import edu.project.TouristTicketOrder.Admin_Activity.NhanVien.NhanVien_MainActivity;
 import edu.project.TouristTicketOrder.Admin_Activity.Tuyen.TuyenXe_MainActivity;
 import edu.project.TouristTicketOrder.Admin_Activity.MayBay.MayBay_MainActivity;
+import edu.project.TouristTicketOrder.Admin_Activity.Voucher.Voucher_MainActivity;
 import edu.project.TouristTicketOrder.DataBaseHandler;
 import edu.project.TouristTicketOrder.R;
 
@@ -36,6 +35,7 @@ public class AdminMainActivity extends AppCompatActivity {
         Button btn_TuyenXe = (Button) findViewById(R.id.btn_TuyenXe);
         Button btn_NhanVien = (Button) findViewById(R.id.btn_NhanVien);
         Button btn_CTHD = (Button) findViewById(R.id.btn_CTHD);
+        Button btn_VouCher = (Button) findViewById(R.id.btn_VouCher);
         getThongKe();
 
         View.OnClickListener clickListener = new View.OnClickListener() {
@@ -58,6 +58,9 @@ public class AdminMainActivity extends AppCompatActivity {
                     case R.id.btn_CTHD:
                         startActivity(new Intent(getApplicationContext(), CTHD_MainActivity.class));
                         break;
+                    case R.id.btn_VouCher:
+                        startActivity(new Intent(getApplicationContext(), Voucher_MainActivity.class));
+                        break;
                 }
             }
         };
@@ -67,6 +70,7 @@ public class AdminMainActivity extends AppCompatActivity {
         btn_NhanVien.setOnClickListener(clickListener);
         btn_CTHD.setOnClickListener(clickListener);
         btn_Xe.setOnClickListener(clickListener);
+        btn_VouCher.setOnClickListener(clickListener);
     }
     public void getThongKe(){
         int doanhthu = dataBaseHandler.getTotalRevenue();
