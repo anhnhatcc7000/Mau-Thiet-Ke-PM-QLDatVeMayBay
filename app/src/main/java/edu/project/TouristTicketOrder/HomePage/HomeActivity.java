@@ -31,7 +31,7 @@ public class HomeActivity extends AppCompatActivity {
     SwitchCompat switchMode;
     boolean nightMode;
     SharedPreferences sharedPreferences;
-    SharedPreferences.Editor editor;
+    SharedPreferences.Editor changState;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,31 +51,7 @@ public class HomeActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SearchFragment()).commit();
         onSearching();
 
-//        switchMode = findViewById(R.id.switchMode);
-//        sharedPreferences = getSharedPreferences("MODE", Context.MODE_PRIVATE);
-//        nightMode = sharedPreferences.getBoolean("nightMode",false);
-//
-//        if(nightMode){
-//            switchMode.setChecked(true);
-//            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-//
-//        }
-//        switchMode.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                if(nightMode){
-//                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-//                    editor = sharedPreferences.edit();
-//                    editor.putBoolean("nightMode",false);
-//                }
-//                else {
-//                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-//                    editor = sharedPreferences.edit();
-//                    editor.putBoolean("nightMode",true);
-//                }
-//                editor.apply();
-//            }
-//        });
+
         sharedPreferences = getSharedPreferences("MODE", Context.MODE_PRIVATE);
         nightMode = sharedPreferences.getBoolean("nightMode", false);
         themeState = nightMode ? new DarkMode() : new LightMode(); // Khởi tạo trạng thái ban đầu
@@ -88,9 +64,9 @@ public class HomeActivity extends AppCompatActivity {
             themeState.apply(HomeActivity.this);
 
             // Lưu trạng thái vào sharedPreferences
-            editor = sharedPreferences.edit();
-            editor.putBoolean("nightMode", isChecked);
-            editor.apply();
+            changState = sharedPreferences.edit();
+            changState.putBoolean("nightMode", isChecked);
+            changState.apply();
         });
 
     }
