@@ -7,13 +7,19 @@ import static edu.project.TouristTicketOrder.BookingPage.SeatOption.optionSeatLi
 import static edu.project.TouristTicketOrder.HomePage.HomeActivity.maKH;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.StrictMode;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.json.JSONObject;
 
 import java.util.LinkedList;
 import java.util.Properties;
@@ -29,11 +35,18 @@ import javax.mail.internet.MimeMessage;
 
 import edu.project.TouristTicketOrder.DataBaseHandler;
 import edu.project.TouristTicketOrder.HomePage.HomeActivity;
+import edu.project.TouristTicketOrder.Model.CreateOrder;
 import edu.project.TouristTicketOrder.Model.TuyenBayModel;
 import edu.project.TouristTicketOrder.R;
+import vn.zalopay.sdk.Environment;
+import vn.zalopay.sdk.ZaloPayError;
+import vn.zalopay.sdk.ZaloPaySDK;
+import vn.zalopay.sdk.listeners.PayOrderListener;
+
 
 public class CheckoutPage extends AppCompatActivity {
     TuyenBayModel tuyenModel;
+    AppCompatButton btnzalo;
     DataBaseHandler dataBaseHandler = new DataBaseHandler(CheckoutPage.this);
     int hanhLy;
     @Override
@@ -46,20 +59,33 @@ public class CheckoutPage extends AppCompatActivity {
 
         TextView tv_totalPrice = findViewById(R.id.tv_totalPrice);
         tv_totalPrice.setText("" + totalPrice);
+
+        StrictMode.ThreadPolicy policy = new
+        StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        // ZaloPay SDK Init
+        ZaloPaySDK.init(2554, Environment.SANDBOX);
     }
 
-    public void cashPayment(View view)
-    {
-        dataBaseHandler.addCTHD(tuyenModel, seats, maKH, totalPrice, hanhLy);
-        SendMail(tuyenModel);
-        Toast.makeText(getApplicationContext(), "Đã lưu thông tin thanh toán", Toast.LENGTH_SHORT).show();
-        seats = null;
-        optionSeatList = new LinkedList<>();
-        Intent intent = new Intent(this, HomeActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
-        finish();
+    public void onCashPaymentClicked(View view) {
+        String paymentMethod = "cash";
+        PaymentStrategy paymentStrategy = PaymentStrategyFactory.getPaymentMethod(paymentMethod,this);
+        paymentStrategy.pay(tuyenModel, hanhLy, totalPrice);
+
     }
+
+
+    public void onZaloPaymentClicked(View view) {
+        String paymentMethod = "zalo";
+        PaymentStrategy paymentStrategy = PaymentStrategyFactory.getPaymentMethod(paymentMethod,this);
+
+        paymentStrategy.pay(tuyenModel, hanhLy, totalPrice);
+    }
+
+
+
+
 
     public void SendMail(TuyenBayModel tuyenModel)
     {
@@ -164,4 +190,10 @@ public class CheckoutPage extends AppCompatActivity {
             throw new RuntimeException(e);
         }
     }
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        ZaloPaySDK.getInstance().onResult(intent);
+    }
+
 }
