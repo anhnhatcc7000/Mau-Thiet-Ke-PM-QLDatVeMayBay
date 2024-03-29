@@ -228,22 +228,20 @@ BookingDetail extends AppCompatActivity {
         String voucherCode = etVoucher.getText().toString();
         if (!voucherCode.isEmpty()) {
             DataBaseHandler dbHandler = new DataBaseHandler(this);
-            int discount = dbHandler.fetchVoucherDiscountFromDB(voucherCode); // Lấy giá trị giảm giá từ DB
+            int discount = dbHandler.fetchVoucherDiscountFromDB(voucherCode); // Xét mã đã có trong database chưa
             if (discount > 0) {
-                // Tính giảm giá dựa vào giá trị discount
-                int discountAmount; // Số tiền được giảm
-                if (discount <= 100) { // Giả sử là giảm giá theo phần trăm
-                    discountAmount = (int)((discount / 100.0) * totalPrice);
-                } else { // Giảm giá trực tiếp bằng giá tiền
-                    discountAmount = discount;
-                }
+                // Tạo đối tượng BasicPrice với giá cơ bản
+                Price price = new BasicPrice(currentPrice);
 
-                totalPrice -= discountAmount; // Áp dụng giảm giá
+                // Áp dụng giảm giá thông qua VoucherDecorator
+                Price discountedPrice = new VoucherDecorator(price, discount);
+
+                // Tính toán giá cuối cùng sau khi đã giảm giá
+                totalPrice = discountedPrice.calculate();
                 if (totalPrice < 0) totalPrice = 0; // Đảm bảo tổng giá không âm
 
                 tv_totalPrice.setText(totalPrice + " VND");
-                Toast.makeText(this, "Áp dụng voucher thành công! Giảm giá: " + discountAmount + " VND", Toast.LENGTH_SHORT).show();
-
+                Toast.makeText(this, "Áp dụng voucher thành công! Giảm giá: " + discount + " VND", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(this, "Mã voucher không hợp lệ hoặc đã hết hạn.", Toast.LENGTH_SHORT).show();
             }
@@ -251,7 +249,5 @@ BookingDetail extends AppCompatActivity {
             Toast.makeText(this, "Vui lòng nhập mã voucher.", Toast.LENGTH_SHORT).show();
         }
     }
-
-
 
 }
